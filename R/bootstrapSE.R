@@ -1,3 +1,8 @@
+library(tidyverse)
+library(lme4)
+library(data.table)
+source("./R/estimation_functions.R")
+
 bootstrapSE = function(n,df,dfname){
   lstSE = numeric(0)
 
