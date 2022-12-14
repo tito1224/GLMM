@@ -24,11 +24,13 @@ btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.warning=TRUE) {
     # generate y_ij (ie seizures)
     simYij <- sapply(sim_data$mu_i,function(x) rpois(1,x) )
     sim_data$seizures <- simYij
+    sim_data  = sim_data %>%
+      select(-mu_i,zi)
 
     # fit the model on simulated data and return estimates
     # add some error handling to figure out which values are causing
     # lack of convergence
-    if(ignore.error==TRUE){
+    if(ignore.warning==TRUE){
       epilepsy_fit <- run_model(sim_data, example)
       return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
     } else {
