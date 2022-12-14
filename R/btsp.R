@@ -1,4 +1,5 @@
-btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.error=TRUE) {
+btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.warning=TRUE) {
+
   btsp_replicate <- function(fit, data) {
 
     # retrieve model output
@@ -29,14 +30,16 @@ btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.error=TRUE) {
     # lack of convergence
     if(ignore.error==TRUE){
       epilepsy_fit <- run_model(sim_data, example)
-      return (c(epilepsy_fit$beta, epilepsy_fit$sigmasq))
+      return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
     } else {
       tryCatch({
         epilepsy_fit <- run_model(sim_data, example)
-        return (c(epilepsy_fit$beta, epilepsy_fit$sigmasq))
-      }, error = function(e) {
-        return(sim_data)
-      })
+        return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
+      }, warning = function(w) {
+        logr::log_print(sim_data,n=nrow(epilepsy))
+        return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
+      } )
+
     }
   }
 
@@ -45,13 +48,22 @@ btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.error=TRUE) {
     set.seed(seed)
   }
 
+  # create temporary file location and open log for error handling
+  tmp <- file.path(getwd(),"btsp.log")
+  lf = logr::log_open(tmp)
+
   # run the bootstrap function to return estimates
   epilepsy_fit <- run_model(data, example)
   r <- replicate(B, btsp_replicate(epilepsy_fit, data))
-  list(interceptSE = sd(r[1,1:B],na.rm = TRUE),
-             ageSE = sd(r[2,1:B],na.rm = TRUE),
-             expindSE = sd(r[3,1:B],na.rm = TRUE),
-             `expind:treatSE` = sd(r[4,1:B],na.rm = TRUE),
-             sigmasqSE = sd(r[5,1:B]),na.rm = TRUE)
+  finalValues <- list(interceptSE = sd(r[1,1:B]),
+             ageSE = sd(r[2,1:B]),
+             expindSE = sd(r[3,1:B]),
+             `expind:treatSE` = sd(r[4,1:B]),
+             sigmasqSE = sd(r[5,1:B]))
+
+  # close log and view results
+  logr::log_close()
+  writeLines(readLines(lf))
+  return(finalValues)
 }
 
