@@ -6,7 +6,6 @@ source("./R/simulateRandomEffect.R")
 
 bootstrapSE = function(n,df,dfname){
   lstSE = numeric(0)
-
   for(item in 1:n){
     # simulate zi,mu_i,y_ij and add simulated seizures to dataset
     dfSimulate = copy(epilepsy)
@@ -26,3 +25,5 @@ bootstrapSE = function(n,df,dfname){
 
   return(estSE)
 }
+
+set.seed(1)

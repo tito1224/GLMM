@@ -1,7 +1,9 @@
 ci <- function(data, example="epilepsy", B) {
+
+  # retrieve estimates from data
   estimates <- run_model(data, example)
   n <- length(estimates$re)
-  btsp <- btsp(data, example, B)
+  btsp <- btsp(data, example, B,1)
   interceptCI <- c(estimates$beta[1] - 1.96*btsp$interceptSE, estimates$beta[1] + 1.96*btsp$interceptSE)
   ageCI <- c(estimates$beta[2] - 1.96*btsp$ageSE, estimates$beta[2] + 1.96*btsp$ageSE)
   expindCI <- c(estimates$beta[3] - 1.96*btsp$expindSE, estimates$beta[3] + 1.96*btsp$expindSE)
