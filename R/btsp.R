@@ -1,4 +1,4 @@
-btsp <- function(data, example="epilepsy", B,seed=NULL) {
+btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.error=TRUE) {
   btsp_replicate <- function(fit, data) {
 
     # retrieve model output
@@ -25,8 +25,19 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
     sim_data$seizures <- simYij
 
     # fit the model on simulated data and return estimates
-    epilepsy_fit <- run_model(sim_data, example)
-    return (c(epilepsy_fit$beta, epilepsy_fit$sigmasq))
+    # add some error handling to figure out which values are causing
+    # lack of convergence
+    if(ignore.error==TRUE){
+      epilepsy_fit <- run_model(sim_data, example)
+      return (c(epilepsy_fit$beta, epilepsy_fit$sigmasq))
+    } else {
+      tryCatch({
+        epilepsy_fit <- run_model(sim_data, example)
+        return (c(epilepsy_fit$beta, epilepsy_fit$sigmasq))
+      }, error = function(e) {
+        return(sim_data)
+      })
+    }
   }
 
   # set seed
@@ -37,10 +48,10 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
   # run the bootstrap function to return estimates
   epilepsy_fit <- run_model(data, example)
   r <- replicate(B, btsp_replicate(epilepsy_fit, data))
-  list(interceptSE = sd(r[1,1:B]),
-             ageSE = sd(r[2,1:B]),
-             expindSE = sd(r[3,1:B]),
-             `expind:treatSE` = sd(r[4,1:B]),
-             sigmasqSE = sd(r[5,1:B]))
+  list(interceptSE = sd(r[1,1:B],na.rm = TRUE),
+             ageSE = sd(r[2,1:B],na.rm = TRUE),
+             expindSE = sd(r[3,1:B],na.rm = TRUE),
+             `expind:treatSE` = sd(r[4,1:B],na.rm = TRUE),
+             sigmasqSE = sd(r[5,1:B]),na.rm = TRUE)
 }
 

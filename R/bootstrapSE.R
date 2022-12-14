@@ -27,3 +27,4 @@ bootstrapSE = function(n,df,dfname){
 }
 
 set.seed(1)
+bootstrapSE(100,epilepsy,"epilepsy")
