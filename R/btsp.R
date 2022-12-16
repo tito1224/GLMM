@@ -1,4 +1,9 @@
-btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.warning=TRUE) {
+library(tidyverse)
+library(lme4)
+library(data.table)
+source("./R/estimation_functions.R")
+
+btsp <- function(data, example="epilepsy", B,seed=NULL) {
 
   btsp_replicate <- function(fit, data) {
 
@@ -22,27 +27,23 @@ btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.warning=TRUE) {
       mutate(mu_i = exp(betas[1] + betas[2]*age + betas[3]*expind + betas[4]*expind*treat+zi))
 
     # generate y_ij (ie seizures)
-    simYij <- sapply(sim_data$mu_i,function(x) rpois(1,x) )
-    sim_data$seizures <- simYij
-    sim_data  = sim_data %>%
-      select(-mu_i,zi)
+    sim_data <- sim_data %>%
+      mutate(seizures=rpois(n(),mu_i)) %>%
+      select(-mu_i,-zi)
 
     # fit the model on simulated data and return estimates
-    # add some error handling to figure out which values are causing
-    # lack of convergence
-    if(ignore.warning==TRUE){
-      epilepsy_fit <- run_model(sim_data, example)
-      return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
-    } else {
-      tryCatch({
-        epilepsy_fit <- run_model(sim_data, example)
-        return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
-      }, warning = function(w) {
-        logr::log_print(sim_data,n=nrow(epilepsy))
-        return (c(unname(epilepsy_fit$beta), epilepsy_fit$sigmasq))
-      } )
+    epilepsy_fit <- run_model(sim_data, example)
+    flagWarning <- epilepsy_fit$convergence
 
+    # use optional information to remove instances of no convergence
+    # because we can'ttrust estimates produced if the model did not converge
+
+    if(length(flagWarning)>1){
+      return(rep(NA,5))
+    } else {
+      return (c(unname(epilepsy_fit$beta), unname(epilepsy_fit$sigmasq)))
     }
+
   }
 
   # set seed
@@ -50,22 +51,15 @@ btsp <- function(data, example="epilepsy", B,seed=NULL,ignore.warning=TRUE) {
     set.seed(seed)
   }
 
-  # create temporary file location and open log for error handling
-  tmp <- file.path(getwd(),"btsp.log")
-  lf = logr::log_open(tmp)
-
   # run the bootstrap function to return estimates
   epilepsy_fit <- run_model(data, example)
   r <- replicate(B, btsp_replicate(epilepsy_fit, data))
-  finalValues <- list(interceptSE = sd(r[1,1:B]),
-             ageSE = sd(r[2,1:B]),
-             expindSE = sd(r[3,1:B]),
-             `expind:treatSE` = sd(r[4,1:B]),
-             sigmasqSE = sd(r[5,1:B]))
+  finalValues <- list(interceptSE = sd(r[1,1:B],na.rm=TRUE),
+             ageSE = sd(r[2,1:B],na.rm=TRUE),
+             expindSE = sd(r[3,1:B],na.rm=TRUE),
+             `expind:treatSE` = sd(r[4,1:B],na.rm=TRUE),
+             sigmasqSE = sd(r[5,1:B],na.rm=TRUE))
 
-  # close log and view results
-  logr::log_close()
-  writeLines(readLines(lf))
   return(finalValues)
 }
 
