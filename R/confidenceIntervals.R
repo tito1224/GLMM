@@ -3,6 +3,19 @@ library(lme4)
 source("./R/btsp.R")
 source("./R/estimation_functions.R")
 
+#' Compute Confidence Interval
+#'
+#' @param data The epilepsy dataframe with id, age, expind, treat and seizure columns
+#' @param example The name of the dataframe - in this scenario it is "epilepsy"
+#' @param B Numeric value to represent the number of times boostrapping should be done
+#' @param seed optional argument to set a seed before bootstrapping so that results can be replicated
+#'
+#' @return A list of confidence intervals for each variable in the dataset
+#' @export
+#'
+#' @examples
+#' ci(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
+#' ci(data = epilepsy,example = "epilepsy",B = 20)
 ci <- function(data, example="epilepsy", B,seed=NULL) {
 
   # retrieve estimates from data
