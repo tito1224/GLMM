@@ -1,6 +1,5 @@
 library(tidyverse)
 library(lme4)
-library(data.table)
 source("./R/estimation_functions.R")
 
 btsp <- function(data, example="epilepsy", B,seed=NULL) {

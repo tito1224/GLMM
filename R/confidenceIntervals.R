@@ -1,6 +1,5 @@
 library(tidyverse)
 library(lme4)
-library(data.table)
 source("./R/btsp.R")
 source("./R/estimation_function.R")
 
