@@ -1,7 +1,7 @@
 library(tidyverse)
 library(lme4)
 source("./R/btsp.R")
-source("./R/estimation_function.R")
+source("./R/estimation_functions.R")
 
 ci <- function(data, example="epilepsy", B,seed=NULL) {
 

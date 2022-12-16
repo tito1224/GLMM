@@ -2,6 +2,19 @@ library(tidyverse)
 library(lme4)
 source("./R/estimation_functions.R")
 
+#' Conduct bootstrapping
+#'
+#' @param data The epilepsy dataframe with id, age, expind, treat and seizure columns
+#' @param example The name of the dataframe - in this scenario it is "epilepsy"
+#' @param B Numeric value to represent the number of times boostrapping should be done
+#' @param seed optional argument to set a seed before bootstrapping so that results can be replicated
+#'
+#' @return A list of standard errors for each variable in the dataset
+#' @export
+#'
+#' @examples
+#' btsp(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
+#' btsp(data = epilepsy,example = "epilepsy",B = 20)
 btsp <- function(data, example="epilepsy", B,seed=NULL) {
 
   btsp_replicate <- function(fit, data) {
