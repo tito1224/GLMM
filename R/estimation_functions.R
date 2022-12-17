@@ -6,6 +6,9 @@
 #' @return A list with summary statistics from the fitted model.
 #' @export
 #'
+#' @import tidyverse
+#' @import lme4
+#'
 #' @examples
 #' ##### Epilepsy #####
 #'

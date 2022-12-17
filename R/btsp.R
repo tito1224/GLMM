@@ -1,8 +1,8 @@
 library(tidyverse)
 library(lme4)
-source("./R/estimation_functions.R")
+#source("./R/estimation_functions.R") - no need to source twice
 
-#' Conduct bootstrapping
+#' Conduct bootstrapping to find standard error using point estimates of variables
 #'
 #' @param data The epilepsy dataframe with id, age, expind, treat and seizure columns
 #' @param example The name of the dataframe - in this scenario it is "epilepsy"
@@ -11,6 +11,9 @@ source("./R/estimation_functions.R")
 #'
 #' @return A list of standard errors for each variable in the dataset
 #' @export
+#'
+#' @import tidyverse
+#' @import lme4
 #'
 #' @examples
 #' btsp(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
