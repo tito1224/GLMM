@@ -21,7 +21,7 @@ Final Project Model Fitting
 ##### Epilepsy #####
 
 ## Load data
-epilepsy <- read_csv("epilepsy.csv")
+epilepsy <- read.csv("epilepsy.csv")
 
 ## Sum separate observations for each patient in the after period
 epilepsy <- epilepsy \%>\%
@@ -40,7 +40,7 @@ epilepsy_fit <- run_model(epilepsy, "epilepsy")
 ##### CTSIB #####
 
 ## Load data
-ctsib <- read_csv("ctsib.csv")
+ctsib <- read.csv("ctsib.csv")
 
 ## Define response (stable or not)
 ctsib <- ctsib \%>\%
@@ -55,7 +55,7 @@ ctsib_fit <- run_model(ctsib, "ctsib")
 
 ##### Tortoise #####
 ## Load data
-tortoise <- read_csv("gopher_tortoise.csv")
+tortoise <- read.csv("gopher_tortoise.csv")
 
 ## Fit model to tortoise data. Fixed effects in the model are:
 ##   (Intercept) -- the intercept
@@ -66,7 +66,7 @@ tortoise_fit <- run_model(tortoise, "tortoise")
 
 ##### Culcita #####
 ## Load data
-culcita <- read_csv("culcita.csv")
+culcita <- read.csv("culcita.csv")
 
 ## Fit model to culcita data. Fixed effects in the model are:
 ##   (Intercept) -- the intercept

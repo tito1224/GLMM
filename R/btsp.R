@@ -46,8 +46,8 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
 
     # generate y_ij (ie seizures)
     sim_data <- sim_data %>%
-      mutate(seizures=rpois(n(),mu_i)) %>%
-      select(-mu_i,-zi)
+      mutate(seizures=rpois(n(),.data$mu_i)) %>%
+      select(-.data$mu_i,-.data$zi)
 
     # fit the model on simulated data and return estimates
     epilepsy_fit <- run_model(sim_data, example)
