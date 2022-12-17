@@ -1,6 +1,7 @@
 library(dplyr)
 library(lme4)
 library(tibble)
+library(stats)
 
 #' Conduct bootstrapping to find standard error using point estimates of variables
 #'
@@ -15,6 +16,7 @@ library(tibble)
 #' @import dplyr
 #' @import lme4
 #' @import tibble
+#' @import stats
 #'
 #' @examples
 #' btsp(data = epilepsy,example = "epilepsy",B = 20,seed = 1)

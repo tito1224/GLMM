@@ -1,6 +1,7 @@
 library(dplyr)
 library(lme4)
 library(tibble)
+library(stats)
 
 #' Final Project Model Fitting
 #'
@@ -13,6 +14,7 @@ library(tibble)
 #' @import dplyr
 #' @import lme4
 #' @import tibble
+#' @import stats
 #'
 #' @examples
 #' ##### Epilepsy #####

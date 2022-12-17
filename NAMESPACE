@@ -3,5 +3,6 @@
 export(btsp)
 export(ci)
 export(run_model)
+import(dplyr)
 import(lme4)
-import(tidyverse)
+import(tibble)
