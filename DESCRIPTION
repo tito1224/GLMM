@@ -21,5 +21,6 @@ Imports:
     dplyr
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    Matrix
 VignetteBuilder: knitr

@@ -41,8 +41,8 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
                   zi =  rnorm(max(id),0,sqrt(sigmasq)))
 
     # add simulated random effects to epilepsy dataframe and compute mu_i
-    sim_data <- left_join(epilepsy,dfZi,by = "id") %>%
-      mutate(mu_i = exp(betas[1] + betas[2]*age + betas[3]*expind + betas[4]*expind*treat+zi))
+    sim_data <- left_join(data,dfZi,by = "id") %>%
+      mutate(mu_i = exp(betas[1] + betas[2]*(.data$age) + betas[3]*(.data$expind) + betas[4]*(.data$expind*.data$treat)+.data$zi))
 
     # generate y_ij (ie seizures)
     sim_data <- sim_data %>%
