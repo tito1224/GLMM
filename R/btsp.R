@@ -1,6 +1,6 @@
-library(tidyverse)
+library(dplyr)
 library(lme4)
-#source("./R/estimation_functions.R") - no need to source twice
+library(tibble)
 
 #' Conduct bootstrapping to find standard error using point estimates of variables
 #'
@@ -12,8 +12,9 @@ library(lme4)
 #' @return A list of standard errors for each variable in the dataset
 #' @export
 #'
-#' @import tidyverse
+#' @import dplyr
 #' @import lme4
+#' @import tibble
 #'
 #' @examples
 #' btsp(data = epilepsy,example = "epilepsy",B = 20,seed = 1)

@@ -1,3 +1,7 @@
+library(dplyr)
+library(lme4)
+library(tibble)
+
 #' Final Project Model Fitting
 #'
 #' @param data the data set for your example
@@ -6,8 +10,9 @@
 #' @return A list with summary statistics from the fitted model.
 #' @export
 #'
-#' @import tidyverse
+#' @import dplyr
 #' @import lme4
+#' @import tibble
 #'
 #' @examples
 #' ##### Epilepsy #####

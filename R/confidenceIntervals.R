@@ -1,7 +1,6 @@
-library(tidyverse)
+library(dplyr)
 library(lme4)
-#source("./R/resultsBtsp.R") - no need to source twice
-#source("./R/estimation_functions.R")
+library(tibble)
 
 #' Compute Confidence Interval
 #'
@@ -13,8 +12,9 @@ library(lme4)
 #' @return A list of confidence intervals for each variable in the dataset
 #' @export
 #'
-#' @import tidyverse
+#' @import dplyr
 #' @import lme4
+#' @import tibble
 #'
 #' @examples
 #' ci(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
