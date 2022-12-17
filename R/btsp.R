@@ -55,8 +55,7 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
     flagWarning <- epilepsy_fit$convergence
 
     # use optional information to remove instances of no convergence
-    # because we can'ttrust estimates produced if the model did not converge
-
+    # because we can't trust estimates produced if the model did not converge
     if(length(flagWarning)>1){
       return(rep(NA,5))
     } else {
