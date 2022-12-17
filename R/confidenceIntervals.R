@@ -16,7 +16,7 @@ library(stats)
 #' @import dplyr
 #' @import lme4
 #' @import tibble
-#' @import stats
+#' @rawNamespace import(stats, except=c(filter,lag))
 #'
 #' @examples
 #' ci(data = epilepsy,example = "epilepsy",B = 20,seed = 1)

@@ -16,7 +16,7 @@ library(stats)
 #' @import dplyr
 #' @import lme4
 #' @import tibble
-#' @import stats
+#' @rawNamespace import(stats, except=c(filter,lag))
 #'
 #' @examples
 #' btsp(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
@@ -30,7 +30,8 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
     ##  (Intercept) -- the intercept (B0)
     ##  age -- age as a continuous predictor (B1)
     ##  expind -- a categorical variable with two levels (0 for before and 1 for after) (B2)
-    ##  expind:treat -- a categorical variable with two levels (1 for observations from individuals on the drug in the after period and 0 otherwise) (B3)
+    ##  expind:treat -- a categorical variable with two levels
+    ### 1 for observations from individuals on the drug in the after period and 0 otherwise) (B3)
 
     sigmasq <- fit$sigmasq
     betas <- fit$beta

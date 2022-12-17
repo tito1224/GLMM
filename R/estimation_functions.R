@@ -14,7 +14,7 @@ library(stats)
 #' @import dplyr
 #' @import lme4
 #' @import tibble
-#' @import stats
+#' @rawNamespace import(stats, except=c(filter,lag))
 #'
 #' @examples
 #' ##### Epilepsy #####
@@ -23,7 +23,8 @@ library(stats)
 #' ##  (Intercept) -- the intercept
 #' ##  age -- age as a continuous predictor
 #' ##  expind -- a categorical variable with two levels (0 for before and 1 for after)
-#' ##  expind:treat -- a categorical variable with two levels (1 for observations from individuals on the drug in the after period and 0 otherwise)
+#' ##  expind:treat -- a categorical variable with two levels (1 for
+#' ##  observations from individuals on the drug in the after period and 0 otherwise)
 #'
 #' epilepsy_fit <- run_model(epilepsy, "epilepsy")
 #'
