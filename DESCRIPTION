@@ -14,7 +14,13 @@ BugReports: https://github.com/tito1224/GLMM/issues
 Depends: 
     R (>= 2.10)
 LazyData: true
+Imports:
+    lme4,
+    stats,
+    tibble,
+    dplyr
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    Matrix
 VignetteBuilder: knitr
