@@ -32,7 +32,7 @@ head(epilepsy, 10)
 The first measurement contains the total number of seizures during the baseline period. The following four measurements contain the number of seizures during the trial period, which is recorded as 4 separate two-week periods.
 
 ### Data Processing
-Based on the data analysis, there were 5 measurements for each subject. However, there should be *m* = 2 measurements per subject, so we must summarize the measurements conducted during the trial period by summing up the number of seizures where **expind** is equal to 1.
+Based on the data analysis, there were 5 measurements for each subject. However, there should be *m* = 2 measurements per subject, so we must summarize the measurements conducted during the trial period by summing up the number of seizures for each individual subject where **expind** is equal to 1.
 ```{r data cleaning}
 epilepsy <- epilepsy %>%
   group_by(id,treat,expind,age) %>%
@@ -52,26 +52,42 @@ epilepsy$expind <- as.factor(epilepsy$expind)
 ```
 
 ### Data Visualization
-After cleaning the data, we can visualize it using graphical methods to get a sense of how the data is distributed. We can plot the counts of data using `ggplot()`. They can be split into two plots for baseline and trial period groups, colour-coded based on the two treatment groups, drug or placebo.
+After cleaning the data, we will visualize it by using graphical methods to get a sense of how the data is distributed. This can be done by plotting the counts of data using `ggplot()`. The data can be split into two plots for the baseline and trial groups, as well as categorize the histogram plot line colours based on the two treatment groups, drug or placebo.
 ```{r plot1}
 ggplot(epilepsy, aes(x=seizures, color=treat)) + geom_histogram(fill="white", alpha=0.5, position="identity") + facet_wrap(~expind) + ggtitle("Number of Seizures for Baseline and Trial Groups")
 ```
-The number of seizures recorded for the baseline period seem to be generally greater, but the histogram is not enough to make accurate statistical conclusions. Thus, we can use functions within this GLMM package to make further inferences of the model's fit to the data.
+The number of seizures recorded for the baseline period seem to be generally greater, but solely relying on data visualization will not be enough to make accurate statistical conclusions. Therefore, we can use functions within the GLMM package to make further inferences by fitting a Poisson GLMM to the data.
 
 ## Fitting the Model
-We can use the function `run_model` in the GLMM package to obtain the point estimates for the $\hat{\beta}$'s $\hat{\sigma}^2$, $z_i$'s, and test statistics for the parameters. To obtain the standard errors for all the parameters, we can also use `btsp()`. The confidence intervals can be computed through the function `ci()` in this package.
+### Point Estimates
+We can use the `run_model()` function in the GLMM package to obtain the point estimates for $\beta_0$, the $\hat{\beta}$'s, and $\hat{\sigma}^2$. This function accepts two arguments:
+
+* The first argument, *data*, accepts a data set
+* The second argument, *example*, accepts a string value which specifies the name of the chosen data set 
+
+The results for the point are outputted below:
 ```{r fit}
 epilepsy_fit <- run_model(epilepsy, "epilepsy")
-epilepsy_fit$beta #compute beta estimates
+epilepsy_fit$beta #output beta estimates
+epilepsy_fit$sigmasq
+```
+
+### Standard Errors
+To obtain the standard errors for all the parameters, we can also use `btsp()`. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that function.
+``` {r btsp}
 btsp(epilepsy, example="epilepsy")
+```
+
+### Confidence Intervals
+```{r ci}
 ci(epilepsy, example="epilepsy")
 ```
 
 ## Hypothesis Test
 We can use the following hypothesis statements to make conclusions about the drug's ability to significantly reduce the number of seizures a patient experiences after accounting for age:
-$$H_0: \beta_2 = 0$$ 
+$$H_0: \beta_2 = 0$$
 $$H_a: \beta_2 < 0$$
-We can reject the null hypothesis if the t-test statistic is less than the critical value. The critical value $\beta_2$ uses degrees of freedom $n-1$ and $\alpha = 0.5$:
+We can reject the null hypothesis if the t-test statistic is less than the critical value. The critical value  degrees of freedom $n-1$ and $\alpha = 0.5$:
 ```{r }
 qt(p=.05, df=58, lower.tail=T)
 ```
