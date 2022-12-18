@@ -59,41 +59,42 @@ ggplot(epilepsy, aes(x=seizures, color=treat)) + geom_histogram(fill="white", al
 The number of seizures recorded for the baseline period seem to be generally greater, but solely relying on data visualization will not be enough to make accurate statistical conclusions. Therefore, we can use functions within the GLMM package to make further inferences by fitting a Poisson GLMM to the data.
 
 ## Fitting the Model
-### Point Estimates
+### Point Estimates with `run_model()`
 We can use the `run_model()` function in the GLMM package to obtain the point estimates for $\beta_0$, the $\hat{\beta}$'s, and $\hat{\sigma}^2$. This function accepts two arguments:
 
 * The first argument, *data*, accepts a data set
-* The second argument, *example*, accepts a string value which specifies the name of the chosen data set 
+* The second argument, *example*, accepts a string value which specifies the name of the chosen data set
 
-The results for the point are outputted below:
+The results for the point estimates are outputted below:
 ```{r fit}
 epilepsy_fit <- run_model(epilepsy, "epilepsy")
 epilepsy_fit$beta #output beta estimates
-epilepsy_fit$sigmasq
+epilepsy_fit$sigmasq #output sigma estimate
 ```
 
-### Standard Errors
-To obtain the standard errors for all the parameters, we can also use `btsp()`. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that function.
+### Standard Errors with `btsp()`
+To obtain the standard errors for all the parameters, we can use the `btsp()` function in the GLMM package. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that same function.
 ``` {r btsp}
 btsp(epilepsy, example="epilepsy")
 ```
 
-### Confidence Intervals
+### Confidence Intervals with `ci()`
+Similarly, the `ci()` function in the package computes the confidence intervals for all the parameters. This function accepts the same arguments as `run_model()` and `btsp()`, and uses both the point estimates and standard errors from those functions respectively to calculate the confidence intervals.
 ```{r ci}
 ci(epilepsy, example="epilepsy")
 ```
 
 ## Hypothesis Test
-We can use the following hypothesis statements to make conclusions about the drug's ability to significantly reduce the number of seizures a patient experiences after accounting for age:
+We can use the following hypothesis statements to make conclusions about the drug's effectiveness to significantly reduce the number of seizures a patient experiences after accounting for age:
 $$H_0: \beta_2 = 0$$
 $$H_a: \beta_2 < 0$$
-We can reject the null hypothesis if the t-test statistic is less than the critical value. The critical value  degrees of freedom $n-1$ and $\alpha = 0.5$:
+We may reject the null hypothesis if the t-test statistic is less than the critical value. The critical value uses the Student's t-distribution with $\nu =n-1$ degrees of freedom and a significance level of $\alpha = 0.5$. Since *n* = 59 subjects, we can find the critical value by using the `qt()` function:
 ```{r }
 qt(p=.05, df=58, lower.tail=T)
 ```
 
-We can use the output from `run_model()`, as it includes the test statistics for all parameters. We are looking at $\beta_2$, denoted by **expind:treat**. We must compare with the t-test statistic of 
+We can use the results from `run_model()`, as it includes the test statistic values for all the parameters. We are interested in the test statistic for $\beta_2$, denoted by **expind:treat** in the fitted model. We must compare the test statistic with the critical value. If the test statistic is less than the critical value, we are able to reject the null hypothesis, indicating a significant reduction in the number of seizures after taking the drug. Otherwise, the null hypothesis holds true and we may assume that there is no significant reduction in the number of seizures after taking the drug.
 ```{r}
 epilepsy_fit$test_stat
 ```
-Since -1.6572965 is greater than -1.671553, we do not reject the null hypothesis. In conclusion,
+Since the test statistic -1.6572965 is greater than the critical value -1.671553, we do not reject the null hypothesis. In conclusion, the drug does not significantly reduce the number of seizures after accounting for age. 
