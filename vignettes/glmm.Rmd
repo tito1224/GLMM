@@ -22,3 +22,30 @@ library(ggplot2)
 
 ## Introduction
 Generalized linear mixed effects models (GLMMs) using a Poisson distribution are extremely useful to model count-based data while also accounting for sources of random variation. The GLMM package contains functions that makes likelihood-based parameter inferences to summarize the Poisson GLMM distribution for a given data set, which includes features such as estimations of the parameter values, as well as their standard errors and confidence intervals. This document introduces you to GLMM's useful tools to help understand the Poisson distribution.
+
+## Exploratory Data Analysis
+The `epilepsy.csv` data set is based on a clinical trial that. We can visualize the data by outputting the first 10 rows.
+```{r}
+epilepsy <- read.csv("./data-raw/epilepsy.csv")
+head(epilepsy, 10)
+```
+The first measurement contains the total number of seizures during the baseline period. The following four measurements contain the number of seizures during the trial period, which is recorded as 4 separate two-week periods. 
+
+### Data Processing
+We can also understand each variable with `str()`. Since **treat** and **expind** should be binary instead of integer data types, we can use `factor()` to categorize them into two levels, 1 or 0.
+```{r}
+str(epilepsy)
+epilepsy$treat <- as.factor(epilepsy$treat)
+epilepsy$expind <- as.factor(epilepsy$expind)
+```
+
+Based on the data analysis, there were 5 measurements for each subject. However, there should be m = 2 measurements per subject, so we must summarize the measurements conducted during the trial period by summing up the number of seizures where **expind** is 1.
+```{r data cleaning}
+epilepsy <- epilepsy %>%
+  group_by(id,treat,expind,age) %>%
+  summarize(seizures = sum(seizures),
+            .groups = "drop")
+```
+
+### Data Visualization
+
