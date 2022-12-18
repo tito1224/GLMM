@@ -16,4 +16,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(GLMM)
+library(dplyr)
+library(ggplot2)
 ```
+
+## Introduction
+Generalized linear mixed effects models (GLMMs) using a Poisson distribution are extremely useful to model count-based data while also accounting for sources of random variation. The GLMM package contains functions that makes likelihood-based parameter inferences to summarize the Poisson GLMM distribution for a given data set, which includes features such as estimations of the parameter values, as well as their standard errors and confidence intervals. This document introduces you to GLMM's useful tools to help understand the Poisson distribution.
