@@ -1,4 +1,3 @@
-
 #' Conduct bootstrapping to find standard error using point estimates of variables
 #'
 #' @param data The epilepsy dataframe with id, age, expind, treat and seizure columns
@@ -33,25 +32,25 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
     betas <- fit$beta
     re <- fit$re
 
-    # simulate zi values using computed estVar MLE
+    #simulate zi values using computed estVar MLE
     dfZi <- tibble(id = 1:length(re),
                   zi =  rnorm(max(id),0,sqrt(sigmasq)))
 
-    # add simulated random effects to epilepsy dataframe and compute mu_i
+    #add simulated random effects to epilepsy dataframe and compute mu_i
     sim_data <- left_join(data,dfZi,by = "id") %>%
       mutate(mu_i = exp(betas[1] + betas[2]*(.data$age) + betas[3]*(.data$expind) + betas[4]*(.data$expind*.data$treat)+.data$zi))
 
-    # generate y_ij (ie seizures)
+    #generate y_ij (ie seizures)
     sim_data <- sim_data %>%
       mutate(seizures=rpois(n(),.data$mu_i)) %>%
       select(-.data$mu_i,-.data$zi)
 
-    # fit the model on simulated data and return estimates
+    #fit the model on simulated data and return estimates
     epilepsy_fit <- run_model(sim_data, example)
     flagWarning <- epilepsy_fit$convergence
 
-    # use optional information to remove instances of no convergence
-    # because we can't trust estimates produced if the model did not converge
+    #use optional information to remove instances of no convergence
+    #we can't trust estimates produced if the model did not converge
     if(length(flagWarning)>1){
       return(rep(NA,5))
     } else {
@@ -60,16 +59,15 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
 
   }
 
-  # set seed
+  #set seed
   if(!is.null(seed)){
     set.seed(seed)
   }
 
-  # run the bootstrap function to return estimates
+  #run the bootstrap function to return estimates
   epilepsy_fit <- run_model(data, example)
 
-  # supress warning about model not fitting because we use the flag to filter out
-  # bad results
+  #supress warning about model not fitting because we use the flag to filter out bad results
   r <- suppressWarnings(replicate(B, btsp_replicate(epilepsy_fit, data)))
   finalValues <- list(interceptSE = sd(r[1,1:B],na.rm=TRUE),
              ageSE = sd(r[2,1:B],na.rm=TRUE),
