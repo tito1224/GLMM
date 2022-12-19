@@ -43,8 +43,6 @@ summary(epilepsy)
 ### Data Processing
 As mentioned earlier, the cleaned data is included with the package. Here we illustrate how the data was cleaned. The raw data has been stored in the data-raw folder to avoid confusion, so the following code will be used to access it. 
 ```{r}
-#filePath = system.file("data-raw","epilepsy.csv",package="GLMM")
-#epilepsyRaw <- read.csv(filePath)
 epilepsyRaw <- read.csv("../data-raw/epilepsy.csv")
 head(epilepsyRaw,10)
 ```
