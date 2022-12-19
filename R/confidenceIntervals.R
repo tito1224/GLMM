@@ -5,6 +5,12 @@
 #' @param B Numeric value to represent the number of times bootstrapping should be done
 #' @param seed Optional argument to set a seed before bootstrapping so that results can be saved
 #'
+#' @importFrom dplyr %>% left_join mutate n select
+#' @importFrom lme4 glmer ranef
+#' @importFrom rlang .data
+#' @importFrom stats binomial coefficients poisson qchisq rnorm rpois sd
+#' @importFrom tibble tibble
+#'
 #' @return A list of confidence intervals for each variable in the data set
 #' @export
 #'
