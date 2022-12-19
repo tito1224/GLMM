@@ -17,7 +17,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Oluwatitomi Adebajo \email{oadebajo@uwo.ca}
+\strong{Maintainer}: Angela Zheng \email{azheng26@uwo.ca}
+
+Authors:
+\itemize{
+  \item Oluwatitomi Adebajo \email{oadebajo@uwo.ca}
+}
 
 }
 \keyword{internal}
