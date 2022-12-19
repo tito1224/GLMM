@@ -8,11 +8,6 @@
 #' @return A list of standard errors for each variable in the dataset
 #' @export
 #'
-#' @import dplyr
-#' @import lme4
-#' @import tibble
-#' @rawNamespace import(stats, except=c(filter,lag))
-#'
 #' @examples
 #' btsp(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
 #' btsp(data = epilepsy,example = "epilepsy",B = 20)

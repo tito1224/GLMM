@@ -8,11 +8,6 @@
 #' @return A list of confidence intervals for each variable in the data set
 #' @export
 #'
-#' @import dplyr
-#' @import lme4
-#' @import tibble
-#' @rawNamespace import(stats, except=c(filter,lag))
-#'
 #' @examples
 #' ci(data = epilepsy,example = "epilepsy",B = 20,seed = 1)
 #' ci(data = epilepsy,example = "epilepsy",B = 20)
