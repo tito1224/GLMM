@@ -1,12 +1,11 @@
-
 #' Compute Confidence Interval
 #'
-#' @param data The epilepsy dataframe with id, age, expind, treat and seizure columns
-#' @param example The name of the dataframe - in this scenario it is "epilepsy"
-#' @param B Numeric value to represent the number of times boostrapping should be done
-#' @param seed optional argument to set a seed before bootstrapping so that results can be replicated
+#' @param data The epilepsy data set with id, age, expind, treat and seizure columns
+#' @param example The name of the data set (called "epilepsy" in this case)
+#' @param B Numeric value to represent the number of times bootstrapping should be done
+#' @param seed Optional argument to set a seed before bootstrapping so that results can be replicated
 #'
-#' @return A list of confidence intervals for each variable in the dataset
+#' @return A list of confidence intervals for each variable in the data set
 #' @export
 #'
 #' @import dplyr
