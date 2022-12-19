@@ -7,11 +7,6 @@
 #' @return A list with summary statistics from the fitted model.
 #' @export
 #'
-#' @import dplyr
-#' @import lme4
-#' @import tibble
-#' @rawNamespace import(stats, except=c(filter,lag))
-#'
 #' @examples
 #' ##### Epilepsy #####
 #'
