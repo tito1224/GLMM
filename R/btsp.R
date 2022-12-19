@@ -1,7 +1,3 @@
-library(dplyr)
-library(lme4)
-library(tibble)
-library(stats)
 
 #' Conduct bootstrapping to find standard error using point estimates of variables
 #'

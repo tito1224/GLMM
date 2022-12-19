@@ -1,7 +1,3 @@
-library(dplyr)
-library(lme4)
-library(tibble)
-library(stats)
 
 #' Compute Confidence Interval
 #'
