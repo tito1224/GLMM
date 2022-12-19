@@ -17,13 +17,14 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message=F}
+#load necessary libraries
 library(GLMM)
 library(dplyr)
 library(ggplot2)
 ```
 
 ## Introduction
-Generalized linear mixed effects models (GLMMs) using a Poisson distribution is an extremely useful to way to model count-based data while also accounting for sources of random variation. The GLMM package contains functions that makes likelihood-based parameter inferences to summarize the Poisson GLMM distribution for a given data set, which includes features such as estimations of the parameter values, as well as their standard errors and confidence intervals. This document introduces you to GLMM's useful tools to help understand the Poisson distribution.
+Generalized linear mixed effects models (GLMMs) using a Poisson distribution is an extremely useful to way to model count-based data while also accounting for sources of random variation. The GLMM package contains functions that makes likelihood-based parameter inferences to summarize the Poisson GLMM distribution for a given data set, which includes features such as estimations of the parameter values, as well as their standard errors and confidence intervals. This document introduces you to GLMM's useful tools to help understand the GLMM for a Poisson distribution with an example data set.
 
 ## Exploratory Data Analysis
 The `epilepsy.csv` data set is based on a clinical trial on the drug Progabide and we can visualize the data by outputting the first 10 rows.
@@ -34,7 +35,7 @@ For each **id**, the first measurement contains the total number of seizures dur
 
 
 A quick look at summary statistics reveals there are 59 unique individuals in the data set. The variables **treat** and **expind** are categorical variables with 0 or 1 entries. The variables **age** and **seizures** are continuous values. For the **treat** variable, the placebo group is denoted by 0 and the drug group is denoted by 1. For the **expind** variable, the baseline period is denoted by 0 and the trial period is denoted by 1. It is important to note that the range for seizures is quite high, being any integer value from 0 to 302. This may affect the type of values generated when performing bootstrapping. More about this will be explained in the later sections.
-```{r,echo=FALSE}
+```{r, echo=FALSE}
 summary(epilepsy)
 ```
 
@@ -54,17 +55,17 @@ epilepsy$expind <- as.factor(epilepsy$expind)
 After cleaning the data, we will visualize it by using graphical methods to get a sense of how the data is distributed. This can be done by plotting the counts of data using `ggplot()` and making a density plot. The data can be split into two plots for the baseline and trial groups, as well as categorized based on the two treatment groups, drug or placebo, using line colours.
 
 The graph illustrates that during both the baseline and trial periods, the number of seizures that each treatment group experiences follow the same distribution; roughly right-skewed. This resembles the general outline of the Poisson distribution's probability mass function (PDF). It appears that most seizures in the data set range from 0 to 50 seizures, with a few outliers. It is important to take note of the outliers, as they affect the inference estimates that are made while conducting the hypothesis test to investigate the effectiveness of the drug. 
-```{r plot1,echo=FALSE}
+```{r plot1, echo=FALSE}
 ggplot(epilepsy, aes(x=seizures, color=treat)) + geom_density(alpha=0.5, position="identity") + facet_wrap(~expind) + ggtitle("Number of Seizures for Baseline and Trial Groups")+ theme_light()
 ```
 
-Moreover, it is interesting that for some individuals, taking the drug has increased the number of seizures they had. This can be seen in the density plot above, and namely is seen significantly for individual 49 in particular where number of seizures increased from 151 to 302. Although qualitative, this is an indicator that the drug may not have been as effective. 
-```{r,echo=FALSE}
+Moreover, it is interesting that for some individuals, taking the drug has increased the number of seizures they had. This can be seen in the density plot above, and namely is seen significantly for individual 49 in particular where the number of seizures increased from 151 to 302. Although qualitative, this is an indicator that the drug may not have been as effective. 
+```{r, echo=FALSE}
 epilepsy[epilepsy$id==49,]
 ```
 
 A summary of the mean, median, and standard deviation based on the **treat** and **expind** variables has been computed below. Due to outliers, the mean does not change much based on the different combinations of **treat** and **expind** variables. As such, the median is a better measure of effectiveness, and we can see a decrease in the median number of seizures for the treatment group based on when looking at **expind** from 0 to 1, which indicates that the drug may be able to reduce seizures.  
-```{r,echo=FALSE}
+```{r central measures, echo=FALSE}
 epilepsy%>%
   group_by(expind,treat)%>%
   summarise(Mean = mean(seizures),
@@ -73,8 +74,8 @@ epilepsy%>%
 ```
 
 A box plot can further illustrate how average seizures amounts and range differs based on the time period and treatment. In the box plot, the number of seizures is on the *y*-axis. The faceted graphs, labelled 0 or 1, represent the baseline period compared to the treatment period. The *x*-axis represents whether the individuals received the placebo or drug treatment. 
-```{r,echo=FALSE}
-ggplot(epilepsy, aes(x = treat, y=seizures, color=treat)) + geom_boxplot(alpha=0.5, position="identity") + facet_wrap(~expind) + ggtitle("Number of Seizures for Baseline and Trial Groups")+ theme_light()
+```{r plot2, echo=FALSE}
+ggplot(epilepsy, aes(x = treat, y=seizures, color=treat)) + geom_boxplot(alpha=0.5, position="identity") + facet_wrap(~expind) + ggtitle("Number of Seizures for Baseline and Trial Groups") + theme_light()
 ```
 From looking at the box plot, we can see that the number of seizures recorded for the baseline period seems to be generally greater. Overall, there is a higher mean number of seizures for both the placebo and drug group. Looking to the graph during the trial period (where **expind** is 1), we can see that the median number of seizures and interquartile range for the drug group (where **treat** is 1) is slightly lower compared to the values for the same group during the baseline period. This would seem to indicate that the drug is effective. However, solely relying on data visualization will not be enough to make accurate statistical conclusions. Therefore, we can use functions within the GLMM package to make further inferences by fitting a Poisson GLMM to the data.
 
@@ -92,14 +93,18 @@ epilepsy$expind <- as.numeric(epilepsy$expind)
 epilepsy_fit <- run_model(epilepsy, "epilepsy")
 ```
 
-```{r}
+```{r point est}
 epilepsy_fit$beta #output beta estimates
-
 epilepsy_fit$sigmasq #output sigma estimate
 ```
 
 ### Standard Errors with `btsp()`
-To obtain the standard errors for all the parameters, we can use the `btsp()` function in the GLMM package. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that same function. In addition, it takes in an argument for the number of bootstrap samples to create, and an optional seed argument if we want to save our results. In this example, we run the bootstrap 100 times, with a seed of 23.
+To obtain the standard errors for all the parameters, we can use the `btsp()` function in the GLMM package. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that same function. In addition, this function also takes the following arguments:
+
+* The third argument, *B*, indicating the number of bootstrap samples to create
+* The fourth argument, *seed*, which is an optional seed argument for replicating results.
+
+In this example, we run the bootstrap 100 times, with a seed of 23.
 ``` {r btsp}
 btsp(epilepsy, example="epilepsy", B=100, seed=23)
 ```
@@ -111,17 +116,17 @@ ci(epilepsy, example="epilepsy", B=100, seed=23)
 ```
 Overall the standard errors are relatively small, also making the confidence intervals narrower. This indicates that the estimates of the $\beta$ values are accurate, and a good measure of modelling the effects of all the predictors on the response variable. 
 
-## Hypothesis Test
+## Hypothesis Testing
 We can use the following hypothesis statements to make conclusions about the drug's effectiveness to significantly reduce the number of seizures a patient experiences after accounting for age:
 $$H_0: \beta_2 = 0$$
 $$H_a: \beta_2 < 0$$
 We may reject the null hypothesis if the t-test statistic is less than the critical value. The critical value uses the Student's t-distribution with $\nu =n-1$ degrees of freedom and a significance level of $\alpha = 0.05$. Since *n* = 59 subjects, we can find the critical value by using the `qt()` function:
-```{r }
+```{r crit value}
 qt(p=.05, df=58, lower.tail=T)
 ```
 
 We can use the results from `run_model()`, as it includes the test statistic values for all the parameters. We are interested in the test statistic for $\beta_2$, denoted by **expind:treat** in the fitted model. We must compare the test statistic with the critical value. If the test statistic is less than the critical value, we are able to reject the null hypothesis, indicating a significant reduction in the number of seizures after taking the drug. Otherwise, the null hypothesis holds true and we may assume that there is no significant reduction in the number of seizures after taking the drug.
-```{r}
-epilepsy_fit$test_stat
+```{r test stats}
+epilepsy_fit$test_stat[4]
 ```
-Since the test statistic -1.6572965 is greater than the critical value -1.671553, we do not reject the null hypothesis. In conclusion, the drug does not significantly reduce the number of seizures after accounting for age. 
+Since the test statistic -1.6240850 is greater than the critical value -1.671553, we do not reject the null hypothesis. In conclusion, the drug does not significantly reduce the number of seizures after accounting for age. 
