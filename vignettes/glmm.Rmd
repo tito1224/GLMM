@@ -40,35 +40,31 @@ summary(epilepsy)
 ```
 
 ### Data Processing
-
 We can understand the forms of each variable with `str()`. This will output each predictor's data types, along with the possible values they can take on.
 ```{r str, echo=FALSE}
 str(epilepsy)
 ```
 
-Based on the results, **treat** and **expind** are integer data types. However, they should be a categorical variable. Therefore, we can use factor them into two levels, 1 or 0 in order to graph,  which is shown below:
+Based on the results, **treat** and **expind** are integer data types. However, they should be a categorical variable. Therefore, we can use factor them into two levels, 1 or 0, which is shown below:
 ```{r factor}
 epilepsy$treat <- as.factor(epilepsy$treat)
 epilepsy$expind <- as.factor(epilepsy$expind)
 ```
 
-
 ### Data Visualization
+After cleaning the data, we will visualize it by using graphical methods to get a sense of how the data is distributed. This can be done by plotting the counts of data using `ggplot()` and making a density plot. The data can be split into two plots for the baseline and trial groups, as well as categorized based on the two treatment groups, drug or placebo, using line colours.
 
-After cleaning the data, we will visualize it by using graphical methods to get a sense of how the data is distributed. This can be done by plotting the counts of data using `ggplot()` and making a density plot. The data can be split into two plots for the baseline and trial groups, as well as categorized based on the two treatment groups, drug or placebo (using line colours).
-
-The graph illustrates that in both the baseline and trial measurement, the number of seizures that each group (treatment and placebo) experience has the same distribution - roughly right skewed. It appears that most seizures in the dataset are centered around 0 to 50 seizures, with a few outliers. It is important to take note of the outliers as they affect the values used when conducting a hypothesis test to investigate the effectiveness of the drug. 
+The graph illustrates that during both the baseline and trial periods, the number of seizures that each treatment group experiences follow the same distribution; roughly right-skewed. This resembles the general outline of the Poisson distribution's probability mass function (PDF). It appears that most seizures in the data set range from 0 to 50 seizures, with a few outliers. It is important to take note of the outliers, as they affect the inference estimates that are made while conducting the hypothesis test to investigate the effectiveness of the drug. 
 ```{r plot1,echo=FALSE}
 ggplot(epilepsy, aes(x=seizures, color=treat)) + geom_density(alpha=0.5, position="identity") + facet_wrap(~expind) + ggtitle("Number of Seizures for Baseline and Trial Groups")+ theme_light()
 ```
 
-Moreover, it is interesting that for some individuals, taking the drug increased the number of seizures they had. This can be seen in density plot above, and namely is seen significantly for individual 49 in particular where number of seizures increased from 151 to 302. Although qualitative, this is an indicator that the drug may not have been as effective. 
+Moreover, it is interesting that for some individuals, taking the drug has increased the number of seizures they had. This can be seen in the density plot above, and namely is seen significantly for individual 49 in particular where number of seizures increased from 151 to 302. Although qualitative, this is an indicator that the drug may not have been as effective. 
 ```{r,echo=FALSE}
 epilepsy[epilepsy$id==49,]
 ```
 
-
-A summary of the mean, median, and standard deviation based on the treat and expind variables has been computed below. The mean does not change a lot based on different combinations of treat and expind variables (due to outliers). As such, median is a better measure of effectiveness - and we see a change in the median number of seizures for the treatment group based on when expind is 0 vs 1, which indicates the drug may be able to reduce seizures.  
+A summary of the mean, median, and standard deviation based on the **treat** and **expind** variables has been computed below. Due to outliers, the mean does not change much based on the different combinations of **treat** and **expind** variables. As such, the median is a better measure of effectiveness, and we can see a decrease in the median number of seizures for the treatment group based on when looking at **expind** from 0 to 1, which indicates that the drug may be able to reduce seizures.  
 ```{r,echo=FALSE}
 epilepsy%>%
   group_by(expind,treat)%>%
@@ -77,13 +73,11 @@ epilepsy%>%
             SD = sd(seizures))
 ```
 
-A boxplot can further illustrate how average seizures amounts and range differs based on the time period and treatment. In the boxplot, the number of seizures is on the y axis. The faceted graphs (0 and 1) represent the baseline period vs the treatment period. The x axis represents whether the individuals received a placebo or the actual treatment. 
+A box plot can further illustrate how average seizures amounts and range differs based on the time period and treatment. In the box plot, the number of seizures is on the *y*-axis. The faceted graphs, labelled 0 or 1, represent the baseline period compared to the treatment period. The *x*-axis represents whether the individuals received the placebo or drug treatment. 
 ```{r,echo=FALSE}
 ggplot(epilepsy, aes(x = treat, y=seizures, color=treat)) + geom_boxplot(alpha=0.5, position="identity") + facet_wrap(~expind) + ggtitle("Number of Seizures for Baseline and Trial Groups")+ theme_light()
 ```
-
-
-From looking at the boxplot, we can see that the number of seizures recorded for the baseline period seems to be generally greater (higher mean seizures for both placebo and treatment group). Looking to the graph during the treatment period (expind = 1) we can see that the median number of seizures and interquartile range for the treatment group (treat = 1) is slightly lower compared to the values for the same group during the baseline period. This would seem to indicate that the drug is effective, but solely relying on data visualization will not be enough to make accurate statistical conclusions. Therefore, we can use functions within the GLMM package to make further inferences by fitting a Poisson GLMM to the data.
+From looking at the box plot, we can see that the number of seizures recorded for the baseline period seems to be generally greater. Overall, there is a higher mean number of seizures for both the placebo and drug group. Looking to the graph during the trial period (where **expind** is 1), we can see that the median number of seizures and interquartile range for the drug group (where **treat** is 1) is slightly lower compared to the values for the same group during the baseline period. This would seem to indicate that the drug is effective. However, solely relying on data visualization will not be enough to make accurate statistical conclusions. Therefore, we can use functions within the GLMM package to make further inferences by fitting a Poisson GLMM to the data.
 
 ## Fitting the Model
 ### Point Estimates with `run_model()`
@@ -112,7 +106,7 @@ btsp(epilepsy, example="epilepsy",B=100,seed=23)
 ```
 
 ### Confidence Intervals with `ci()`
-Similarly, the `ci()` function in the package computes the confidence intervals for all the parameters. This function accepts the same arguments as `run_model()` and `btsp()`, and uses both the point estimates and standard errors from those functions respectively to calculate the confidence intervals.
+Similarly, the `ci()` function in the package computes the confidence intervals for all the parameters. This function accepts the same arguments as `run_model()` and `btsp()`, and uses both the point estimates and standard errors from those functions respectively to calculate the output the following reults:
 ```{r ci}
 ci(epilepsy, example="epilepsy",B=100,seed=23)
 ```
