@@ -3,11 +3,6 @@
 export(btsp)
 export(ci)
 export(run_model)
-import(dplyr)
-import(lme4)
-import(stats, except=c(filter,lag))
-
-import(tibble)
 importFrom(dplyr,"%>%")
 importFrom(dplyr,left_join)
 importFrom(dplyr,n)
