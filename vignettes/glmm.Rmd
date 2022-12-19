@@ -106,16 +106,18 @@ print(epilepsy_fit$sigmasq) #output sigma estimate
 ```
 
 ### Standard Errors with `btsp()`
-To obtain the standard errors for all the parameters, we can use the `btsp()` function in the GLMM package. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that same function. In addition, it takes in an argument for the number of bootstrap samples to create, and an optional seed argument if we want to save our results. In this example, we run the bootstrap 20 times, with a seed of 1.
+To obtain the standard errors for all the parameters, we can use the `btsp()` function in the GLMM package. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that same function. In addition, it takes in an argument for the number of bootstrap samples to create, and an optional seed argument if we want to save our results. In this example, we run the bootstrap 100 times, with a seed of 23.
 ``` {r btsp}
-btsp(epilepsy, example="epilepsy",B=20,seed=1)
+btsp(epilepsy, example="epilepsy",B=100,seed=23)
 ```
 
 ### Confidence Intervals with `ci()`
 Similarly, the `ci()` function in the package computes the confidence intervals for all the parameters. This function accepts the same arguments as `run_model()` and `btsp()`, and uses both the point estimates and standard errors from those functions respectively to calculate the confidence intervals.
 ```{r ci}
-ci(epilepsy, example="epilepsy",B=20,seed=1)
+ci(epilepsy, example="epilepsy",B=100,seed=23)
 ```
+
+Overall the standard errors (and thus confidence intervals) are relatively small, which indicates that the estimates of the beta values are accurate, and a good measure of modelling the effects of the different variables on the response (seizures). 
 
 ## Hypothesis Test
 We can use the following hypothesis statements to make conclusions about the drug's effectiveness to significantly reduce the number of seizures a patient experiences after accounting for age:
