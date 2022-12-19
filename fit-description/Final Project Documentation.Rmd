@@ -13,12 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Introduction
-This document summarizes the various algorithms that the GLMM package uses in order to provide a solution to the research questions involved with the `epilepsy.csv` data set. Notably, each function within the package serves as its own  algorithm to aid in making likelihood-based inferences towards understanding the Poisson GLMM's fit to the data. 
-
-The question being answered with respect to the data is: does the drug Progabide significantly reduce the number of seizures a patient experiences after accounting for age?
+This document summarizes the various algorithms that the GLMM package uses in order to provide a solution to the research questions involved with the `epilepsy.csv` data set. More specifically, we would like to determine whether the drug Progabide significantly reduce the number of seizures a patient experiences after accounting for age. Notably, each function within the package serves as its own algorithm to aid in making likelihood-based inferences towards understanding the Poisson GLMM's fit to the data. 
 
 ## Maximum Likelihood Inferences
-
 ### Linear Predictor Form 
 The model used in this package takes on the following form: 
 
@@ -26,7 +23,7 @@ The model used in this package takes on the following form:
     \mu_i = \text{exp}(\beta_0 + \beta_1x_{1i} + \beta_2x_{2i}x_{3i} + \beta_3x_3i + Z_i)
 \]
 
-where $\beta_1 = \text{age}$, $\beta_2 = \text{treat*expind}$, $\beta_3 = \text{expind}$, and $Z_i$ represents the random effect ($Z_i \sim \text{N}(0,\sigma^2)$). $\beta_2$ represents the effect of the drug that is administered \textit{during} the clinical trial. As such, we are interested in testing whether there is significant interaction between the drug and the measurement period.
+where $\beta_1$ is the predictor for **age**, $\beta_2$ is the predictor for the interaction between **expind** and **treat**,  $\beta_3$ is the predictor for **expind**, and $Z_i$ represents the random effect. $\beta_2$ represents the effect of the drug that is administered \textit{during} the clinical trial. As such, we are interested in testing whether there is significant interaction between the drug and the measurement period.
 
 ### Parameter Estimates
 The algorithm within **estimation_functions.R** uses the `run_model()` function to find the estimates for $\beta_0$, the $\hat{\beta}$'s, $\hat{\sigma}^2$, the $Z_i$'s, and the t-test statistics for each $\beta$ predictor. As a result, `run_model()` outputs a printed summary that is similar to functions such as `lm()` and `summary.lm()`. The point estimates for $\beta_0$ and $\hat{\sigma}^2$ are based on the expressions derived where:
@@ -56,7 +53,7 @@ The standard errors for the parameter estimates are calculated in the **bootstra
 
 Consequently, this bootstrapping algorithm will compute the standard errors for all parameters using the `sd()` function based on each parameter's samples of size *B*.
 
-One consideration to make note of is that because the range of seizure values in the epilepsy data set is so large (0 to 302 seizures) there are instances when the model cannot converge when the simulated data is used. Since we cannot trust the estimates if the model did not converge, the btsp() function ensures that those estimates are not used in the final calculation of the standard error, in order to preserve accuracy. 
+One consideration to keep in mind is that because the number of seizures range largely from 0 to 302 in the data set, there are instances when the model cannot converge when the simulated data is used. Since we cannot trust the estimates if the model did not converge, the `btsp()` function ensures that those estimates are not used in the final computation of the standard errors, in order to preserve accuracy. 
 
 ### Confidence Intervals
 The confidence intervals utilize the point estimates from the `run_model()` function as well as the standard errors from the `btsp()` function. The function to implement confidence intervals are found in the **confidenceIntervals.R** file and this algorithm is implemented within the `ci()` function. The confidence intervals for the $\beta_0$, $\beta$, and $\sigma^2$ estimates are based on the following expressions:
@@ -83,4 +80,7 @@ To find the critical value $t_{\alpha,n-1}$, we can use the `qt()` function. If 
 
 If the null hypothesis, $H_0$, is true, this is equivalent to the claim that the drug does *not* significantly reduce the number of seizures a patient experiences. In other words, the drug does not have an effect on the subjects. If the alternative hypothesis, $H_a$, is true, this is equivalent to the claim that the drug does significantly reduce the number of seizures a patient experiences.
 
-Based on the results of the vignette, the test statistic was not less than the critical value, hence we failed to reject the null hypothesis. One thing to keep in mind however, is that there were significant outliers in the number of seizures seen in the data. The reason this is important is because outliers tend to increase our estimated standard errpr, and this reduces the value of the test statistic (as it is calculated in the following way: $t' = \frac{\hat{\beta_2}-0}{SE(\hat{\beta_2})}$). A smaller test statistic means it becomes less likely to reject the null-hypothesis. Although the results of this data gives us reason to reject the null hypothesis and conclude the drug is not effective, given that the value of the test statistic is so close to the critical value, we would suggest that more data is gathered, in order to draw more conclusive results about the effect of the drug.
+## Conclusion
+Based on the results mentioned in the vignette, the test statistic was not less than the critical value, hence we failed to reject the null hypothesis. However, one thing to take note of is that there were outliers in the number of seizures seen in the data. Outliers tend to increase the estimated standard errors, which also reduces the value of the test statistic, computed using $t^* = \frac{\hat{\beta_2}-0}{SE(\hat{\beta_2})}$. This is important because a smaller test statistic allows for a greater chance to reject the null hypothesis.
+
+Running all the algorithms mentioned in this document has resulted in statistical evidence to reject the null hypothesis and conclude the drug is not effective. However, given that the value of the test statistic is so close to the critical value, we suggest that more data is gathered in order to draw more conclusive results about the effectiveness of the drug.
