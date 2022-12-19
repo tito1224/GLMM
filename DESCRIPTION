@@ -1,5 +1,5 @@
 Package: GLMM
-Title: Fitting a Generalized Linear Mixed Model
+Title: Fitting a Generalized Linear Mixed Model for a Poisson Distribution
 Version: 0.0.0.9000
 Authors@R: 
     person("Oluwatitomi", "Adebajo", , "oadebajo@uwo.ca", role = c("aut","cre"))
