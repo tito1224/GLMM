@@ -2,8 +2,8 @@ Package: GLMM
 Title: Fitting a Generalized Linear Mixed Model for a Poisson Distribution
 Version: 0.0.0.9000
 Authors@R: 
-    c(person("Oluwatitomi", "Adebajo", , "oadebajo@uwo.ca", role = c("aut","cre")),
-    person("Angela", "Zheng", , "azheng26@uwo.ca", role = c("aut","cre")))
+    c(person("Oluwatitomi", "Adebajo", , "oadebajo@uwo.ca", role = c("aut")),
+    person("Angela", "Zheng", , "azheng26@uwo.ca", role = c("cre")))
 Description: This package fits a Poisson GLMM and provides estimates of coefficients, standard errors and confidence intervals using bootstrapping.
 License: GPL (>= 3)
 Encoding: UTF-8

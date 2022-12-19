@@ -43,8 +43,9 @@ summary(epilepsy)
 ### Data Processing
 As mentioned earlier, the cleaned data is included with the package. Here we illustrate how the data was cleaned. The raw data has been stored in the data-raw folder to avoid confusion, so the following code will be used to access it. 
 ```{r}
-filePath = system.file("data-raw","epilepsy.csv",package="GLMM")
-epilepsyRaw <- read.csv(filePath)
+#filePath = system.file("data-raw","epilepsy.csv",package="GLMM")
+#epilepsyRaw <- read.csv(filePath)
+epilepsyRaw <- read.csv("./data-raw/epilepsy.csv")
 head(epilepsyRaw,10)
 ```
 The first measurement contains the total number of seizures during the baseline period. The following four measurements contain the number of seizures during the trial period, which is recorded as 4 separate two-week periods. For the purposes of conducting the hypothesis test, there should be *m* = 2 measurements per subject, so we must summarize the measurements conducted during the trial period by summing up the number of seizures for each individual subject where **expind** is equal to 1.
