@@ -5,6 +5,12 @@
 #' @param B Numeric value to represent the number of times boostrapping should be done
 #' @param seed optional argument to set a seed before bootstrapping so that results can be saved
 #'
+#' @importFrom dplyr %>% left_join mutate n select
+#' @importFrom lme4 glmer ranef
+#' @importFrom rlang .data
+#' @importFrom stats binomial coefficients poisson qchisq rnorm rpois sd
+#' @importFrom tibble tibble
+#'
 #' @return A list of standard errors for each variable in the dataset
 #' @export
 #'

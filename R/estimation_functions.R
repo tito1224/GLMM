@@ -4,6 +4,12 @@
 #' @param data the data set for your example
 #' @param example the name of your example: one of "culcita", "ctsib", "epilepsy", or "tortoise"
 #'
+#' @importFrom dplyr %>% left_join mutate n select
+#' @importFrom lme4 glmer ranef
+#' @importFrom rlang .data
+#' @importFrom stats binomial coefficients poisson qchisq rnorm rpois sd
+#' @importFrom tibble tibble
+#'
 #' @return A list with summary statistics from the fitted model.
 #' @export
 #'
