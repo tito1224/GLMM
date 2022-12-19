@@ -20,7 +20,7 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
     ##  (Intercept) -- the intercept (B0)
     ##  age -- age as a continuous predictor (B1)
     ##  expind -- a categorical variable with two levels (0 for before and 1 for after) (B2)
-    ##  expind:treat -- a categorical variable with two levels
+    ##  expind:treat -- a categorical variable with two levels:
     ### 1 for observations from individuals on the drug in the after period and 0 otherwise) (B3)
 
     sigmasq <- fit$sigmasq
