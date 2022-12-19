@@ -18,12 +18,12 @@
 #' ci(data = epilepsy,example = "epilepsy",B = 20)
 ci <- function(data, example="epilepsy", B,seed=NULL) {
 
-  # retrieve estimates from data
+  #retrieve estimates from data
   estimates <- run_model(data, example)
   n <- length(estimates$re)
   resultsBtsp <- btsp(data, example, B,seed)
 
-  # create ci using bootstrap estimates
+  #create ci using bootstrap estimates
   interceptCI <- c(estimates$beta[1] - 1.96*resultsBtsp$interceptSE, estimates$beta[1] + 1.96*resultsBtsp$interceptSE)
   ageCI <- c(estimates$beta[2] - 1.96*resultsBtsp$ageSE, estimates$beta[2] + 1.96*resultsBtsp$ageSE)
   expindCI <- c(estimates$beta[3] - 1.96*resultsBtsp$expindSE, estimates$beta[3] + 1.96*resultsBtsp$expindSE)
