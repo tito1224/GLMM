@@ -24,15 +24,16 @@ library(ggplot2)
 ```
 
 ## Introduction
-Generalized linear mixed effects models (GLMMs) using a Poisson distribution is an extremely useful to way to model count-based data while also accounting for sources of random variation. The GLMM package contains functions that makes likelihood-based parameter inferences to summarize the Poisson GLMM distribution for a given data set, which includes features such as estimations of the parameter values, as well as their standard errors and confidence intervals. This document introduces you to GLMM's useful tools to help understand the GLMM for a Poisson distribution with an example data set.
+Generalized linear mixed effects models (GLMMs) using a Poisson distribution is an extremely useful to way to model count-based data while also accounting for sources of random variation. The GLMM package contains functions that makes likelihood-based parameter inferences to summarize the Poisson GLMM distribution for a given data set, which includes features such as estimations of the parameter values, as well as their standard errors and confidence intervals. This document introduces you to GLMM's useful tools to help understand the GLMM for a Poisson distribution with an example data set.  
 
 ## Exploratory Data Analysis
+One of the goal's of creating this package is to ultimately answer the question: does the drug Progabide significantly reduce the number of seizures a patient experiences after accounting for age? The analysis below shows the steps taken to answer this question. 
+
 The `epilepsy.csv` data set is based on a clinical trial on the drug Progabide and we can visualize the data by outputting the first 10 rows.
 ```{r,echo=FALSE}
 head(epilepsy, 10)
 ```
-For each **id**, the first measurement contains the total number of seizures during the baseline period. The next measurement contains the number of seizures during the trial period, which is recorded as 4 separate two-week periods in the raw data, but has been cleaned up for use in the package.
-
+For each **id**, the first measurement contains the total number of seizures during the baseline period. The next measurement contains the number of seizures during the trial period, which is recorded as 4 separate two-week periods in the raw data, but has been cleaned up for use in the package. We will explain this in more detail in the data processing section. 
 
 A quick look at summary statistics reveals there are 59 unique individuals in the data set. The variables **treat** and **expind** are categorical variables with 0 or 1 entries. The variables **age** and **seizures** are continuous values. For the **treat** variable, the placebo group is denoted by 0 and the drug group is denoted by 1. For the **expind** variable, the baseline period is denoted by 0 and the trial period is denoted by 1. It is important to note that the range for seizures is quite high, being any integer value from 0 to 302. This may affect the type of values generated when performing bootstrapping. More about this will be explained in the later sections.
 ```{r, echo=FALSE}
@@ -40,7 +41,22 @@ summary(epilepsy)
 ```
 
 ### Data Processing
-We can understand the forms of each variable with `str()`. This will output each predictor's data types, along with the possible values they can take on.
+As mentioned earlier, the cleaned data is included with the package. Here we illustrate how the data was cleaned. The raw data has been stored in the data-raw folder to avoid confusion, so the following code will be used to access it. 
+```{r}
+filePath = system.file("data-raw","epilepsy.csv",package="GLMM")
+epilepsyRaw <- read.csv(filePath)
+head(epilepsyRaw,10)
+```
+The first measurement contains the total number of seizures during the baseline period. The following four measurements contain the number of seizures during the trial period, which is recorded as 4 separate two-week periods. For the purposes of conducting the hypothesis test, there should be *m* = 2 measurements per subject, so we must summarize the measurements conducted during the trial period by summing up the number of seizures for each individual subject where **expind** is equal to 1.
+
+```{r data cleaning}
+epilepsyClean <- epilepsyRaw %>%
+  group_by(id,treat,expind,age) %>%
+  summarize(seizures = sum(seizures),
+            .groups = "drop")
+```
+
+We can understand the forms of each variable with `str()`. This will output each predictor's data types, along with the possible values they can take on. Now that we have illustrated how the clean data was found, for the remainder of the explanation, we will use the original "epilepsy" dataset that came with the package to avoid any confusion. 
 ```{r str, echo=FALSE}
 str(epilepsy)
 ```

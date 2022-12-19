@@ -3,7 +3,7 @@
 #' @param data The epilepsy dataframe with id, age, expind, treat and seizure columns
 #' @param example The name of the dataframe - in this scenario it is "epilepsy"
 #' @param B Numeric value to represent the number of times boostrapping should be done
-#' @param seed optional argument to set a seed before bootstrapping so that results can be replicated
+#' @param seed optional argument to set a seed before bootstrapping so that results can be saved
 #'
 #' @return A list of standard errors for each variable in the dataset
 #' @export
