@@ -18,7 +18,8 @@ Imports:
     lme4,
     stats,
     tibble,
-    dplyr
+    dplyr,
+    rlang
 Suggests: 
     knitr,
     rmarkdown,
