@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=F}
 library(GLMM)
 library(dplyr)
 library(ggplot2)
@@ -30,11 +30,10 @@ The `epilepsy.csv` data set is based on a clinical trial on the drug Progabide a
 ```{r,echo=FALSE}
 head(epilepsy, 10)
 ```
-For each id, the first measurement contains the total number of seizures during the baseline period. The next measurement contains the number of seizures during the trial period, which is recorded as 4 separate two-week periods in the raw data, but has been cleaned up for use in the package.
+For each **id**, the first measurement contains the total number of seizures during the baseline period. The next measurement contains the number of seizures during the trial period, which is recorded as 4 separate two-week periods in the raw data, but has been cleaned up for use in the package.
 
 
-A quick look at summary statistics reveals there are 59 unique individuals in the dataset. The variables treat and expind are categorical variables with 0,1 entries, and age and seizures are continuous variables. The treat variable is a categorical variable with two levels (0 for placebo group or 1 for drug group)
-whereas the expind is categorical variable with two levels (0 for baseline measurement and 1 for trial measurement. It is important to note that the range for seizures is quite high (0 to 302) and that may affect the type of values generated when performing bootstrapping. More will be explained in the later section.
+A quick look at summary statistics reveals there are 59 unique individuals in the data set. The variables **treat** and **expind** are categorical variables with 0 or 1 entries. The variables **age** and **seizures** are continuous values. For the **treat** variable, the placebo group is denoted by 0 and the drug group is denoted by 1. For the **expind** variable, the baseline period is denoted by 0 and the trial period is denoted by 1. It is important to note that the range for seizures is quite high, being any integer value from 0 to 302. This may affect the type of values generated when performing bootstrapping. More about this will be explained in the later sections.
 ```{r,echo=FALSE}
 summary(epilepsy)
 ```
@@ -90,28 +89,27 @@ The results for the point estimates are outputted below:
 ```{r fit}
 epilepsy$treat <- as.numeric(epilepsy$treat)
 epilepsy$expind <- as.numeric(epilepsy$expind)
-
 epilepsy_fit <- run_model(epilepsy, "epilepsy")
 ```
-```{r}
-print(epilepsy_fit$beta) #output beta estimates
 
-print(epilepsy_fit$sigmasq) #output sigma estimate
+```{r}
+epilepsy_fit$beta #output beta estimates
+
+epilepsy_fit$sigmasq #output sigma estimate
 ```
 
 ### Standard Errors with `btsp()`
 To obtain the standard errors for all the parameters, we can use the `btsp()` function in the GLMM package. This function accepts the same two arguments as `run_model()`, and uses the point estimates computed from that same function. In addition, it takes in an argument for the number of bootstrap samples to create, and an optional seed argument if we want to save our results. In this example, we run the bootstrap 100 times, with a seed of 23.
 ``` {r btsp}
-btsp(epilepsy, example="epilepsy",B=100,seed=23)
+btsp(epilepsy, example="epilepsy", B=100, seed=23)
 ```
 
 ### Confidence Intervals with `ci()`
-Similarly, the `ci()` function in the package computes the confidence intervals for all the parameters. This function accepts the same arguments as `run_model()` and `btsp()`, and uses both the point estimates and standard errors from those functions respectively to calculate the output the following reults:
+Similarly, the `ci()` function in the package computes the confidence intervals for all parameters. This function accepts the same arguments as `run_model()` and `btsp()`, and uses both the point estimates and standard errors from those functions respectively to calculate the following results:
 ```{r ci}
-ci(epilepsy, example="epilepsy",B=100,seed=23)
+ci(epilepsy, example="epilepsy", B=100, seed=23)
 ```
-
-Overall the standard errors (and thus confidence intervals) are relatively small, which indicates that the estimates of the beta values are accurate, and a good measure of modelling the effects of the different variables on the response (seizures). 
+Overall the standard errors are relatively small, also making the confidence intervals narrower. This indicates that the estimates of the $\beta$ values are accurate, and a good measure of modelling the effects of all the predictors on the response variable. 
 
 ## Hypothesis Test
 We can use the following hypothesis statements to make conclusions about the drug's effectiveness to significantly reduce the number of seizures a patient experiences after accounting for age:
