@@ -71,7 +71,10 @@ btsp <- function(data, example="epilepsy", B,seed=NULL) {
 
   # run the bootstrap function to return estimates
   epilepsy_fit <- run_model(data, example)
-  r <- replicate(B, btsp_replicate(epilepsy_fit, data))
+
+  # supress warning about model not fitting because we use the flag to filter out
+  # bad results
+  r <- suppressWarnings(replicate(B, btsp_replicate(epilepsy_fit, data)))
   finalValues <- list(interceptSE = sd(r[1,1:B],na.rm=TRUE),
              ageSE = sd(r[2,1:B],na.rm=TRUE),
              expindSE = sd(r[3,1:B],na.rm=TRUE),

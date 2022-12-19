@@ -52,7 +52,7 @@ run_model <- function(data, example = "tortoise"){
                       family = poisson,
                       data = data)
   else
-    stop("You must set example to one of: tortoise, culcita, ctsib, or epilspsy.")
+    stop("You must set example to one of: tortoise, culcita, ctsib, or epilepsy.")
 
   ## Compute model summary
   lmer_summ <- summary(lmer_fit)
@@ -73,12 +73,14 @@ run_model <- function(data, example = "tortoise"){
   optinfo <- attributes(lmer_fit)$optinfo
 
   ## Avoid estimate of sigmasq=0 for the original tortoise data only
-  if(example == "tortoise" & all(sort(data$shells) == c(0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,4,5,8,10,11,12))){
-    if(sigmasq == 0){
-      sigmasq <- .100
+  if(example == "tortoise" ){
+    if(all(sort(data$shells) == c(0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,4,5,8,10,11,12))){
+      if(sigmasq == 0){
+        sigmasq <- .100
 
-      set.seed(7777)
-      re <- rnorm(length(re), sd = sqrt(sigmasq))
+        set.seed(7777)
+        re <- rnorm(length(re), sd = sqrt(sigmasq))
+      }
     }
   }
 

@@ -13,8 +13,8 @@ A data frame with 118 rows and 5 columns:
 \item{age}{Contionus variable to represent age of the individual}
 \item{expind}{A categorical variable with two levels (0 for baseline
 measurement and 1 for trial measurement)}
-\item{treat}{A categorical variable with two levels (0 for baseline
-measurement or 1 for trial measurement)}
+\item{treat}{A categorical variable with two levels (0 for placebo
+group or 1 for drug group)}
 ...
 }
 }

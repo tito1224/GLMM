@@ -11,5 +11,4 @@ epilepsy = epilepsy %>%
   summarize(seizures = sum(seizures),
             .groups = "drop")
 
-
 usethis::use_data(epilepsy, overwrite = TRUE)
